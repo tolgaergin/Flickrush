@@ -1,0 +1,22 @@
+{
+  "name": "flickrush",
+  "version": "1.0.1",
+  "description": "node modules for flickrush plugin",
+  "main": "jquery.flickrush.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tolgaergin/Flickrush.git"
+  },
+  "keywords": [
+    "flickr"
+  ],
+  "author": "Philip Beel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tolgaergin/Flickrush/issues"
+  },
+  "homepage": "https://github.com/tolgaergin/Flickrush#readme"
+}

@@ -2,85 +2,75 @@
  * Flickrush 1.4 - A jQuery flickr plugin
  *
  * Copyright (c) 2010 Philip Beel (http://www.theodin.co.uk/)
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) 
+ * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Revision: $Id: jquery.flickrush.js 2015-05-05 $ 
+ * Revision: $Id: jquery.flickrush.js 2015-05-05 $
  *
  */
-(function($){
+(function ($) {
+  $.fn.flickrush = function (options) {
+    var defaults = {
+      limit: 3,
+      random: true,
+      id: '30005186@N02',
+      tags: false,
+    };
 
-	$.fn.flickrush=function(options)
-	{
+    var options = $.extend(defaults, options);
+    var flickrurl;
 
-		var defaults = {
-			limit:3,
-			random:true,
-			id:'30005186@N02',
-			tags:false
-		};
+    // Is the document secure
+    isSSL = (location.protocol === 'https:') ? true : false;
 
-		var options = $.extend(defaults,options)
-		,	flickrurl;
+    if (isSSL)
+      flickrurl = 'https://secure.flickr.com/services/feeds/photos_public.gne?format=json';
+    else
+      flickrurl = 'http://api.flickr.com/services/feeds/photos_public.gne?format=json';
 
-		// Is the document secure
-		isSSL = (location.protocol === "https:") ? true : false ;
+    if (defaults.tags === true)
+      flickrurl += '&tags=' + defaults.tags;
 
-		if(isSSL)
-			flickrurl = "https://secure.flickr.com/services/feeds/photos_public.gne?format=json";	
-		else
-			flickrurl = "http://api.flickr.com/services/feeds/photos_public.gne?format=json";
-		
+    // Return each instance of the flickrush
+    return this.each(function (options) {
+      var $act = $(this);
+      var apiCall = flickrurl;
 
-		if(defaults.tags === true)
-			flickrurl += '&tags=' + defaults.tags;
+      $.getJSON(apiCall + '&id=' + defaults.id + '&jsoncallback=?',
 
-		// Return each instance of the flickrush
-		return this.each(function(options)
-		{
-			var act = $(this)
-			,	apiCall = flickrurl;
-		
-			$.getJSON(apiCall + "&id=" + defaults.id + "&jsoncallback=?",
-		
-			function(data)
-			{
-				var flickrImage
-				,	integer
-				,	flickrImages = [];
-				
-				// Loop through each image item
-				data.items.forEach(function (item, i) 
-				{
-					// Create an image DOM node
-					if (i <= defaults.limit-1)
-					{
-						// Assign the image with attributes
-						flickrImage = $("<img/>").attr({
-							src: item.media.m,
-							alt: item.tags
-						});
+        function (data) {
+          var flickrImage;
+          var integer;
+          var flickrImages = [];
 
-						// Push flickr images into array
-						flickrImages.push(flickrImage);
-					}					
-				})
+          // Loop through each image item
+          data.items.forEach(function (item, i) {
+            // Create an image DOM node
+            if (i <= defaults.limit - 1) {
+              // Assign the image with attributes
+              flickrImage = '<a href="' + item.link +
+              '" target="_blank" class="iconic-hover iconic-hover-flickr">' +
+              '<img src="' + item.media.m + '" alt="' + item.tags + '"></a>';
 
-				// Mix the order of flickr images if required
-				if(defaults.random === true && defaults.limit >1)
-				{
-					// Randomise the image array order
-					flickrImages.sort(function() { 
-						return 0.5 - Math.random();
-					});	
-				}
+              // Push flickr images into array
+              flickrImages.push(flickrImage);
+            }
+          });
 
-				// append flickr images to the specified DOM element 
-				flickrImages.forEach(function (image) {
-					$(act).append(image);
-				});
-			});
-			
-		});
-	}
+          // Mix the order of flickr images if required
+          if (defaults.random === true && defaults.limit > 1) {
+            // Randomise the image array order
+            flickrImages.sort(function () {
+              return 0.5 - Math.random();
+            });
+          }
+
+          // append flickr images to the specified DOM element
+          flickrImages.forEach(function (image) {
+            $act.append('<li>' + image + '</li>');
+          });
+        });
+
+    });
+  };
 })(jQuery);
